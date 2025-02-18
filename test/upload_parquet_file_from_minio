@@ -1,0 +1,22 @@
+import pyarrow.parquet as pq
+import s3fs
+
+# Initialiser le système de fichiers S3
+s3 = s3fs.S3FileSystem(
+    key="minioadmin",
+    secret="minioadmin",
+    endpoint_url="http://minio:9000"
+)
+
+# Lister les fichiers Parquet dans le dossier pour éviter l'erreur de base dir
+files = s3.glob("spark/data/source/flights/*.parquet")  # Ne pas mettre `s3://`
+
+print("Fichiers trouvés :", files)  # Vérifier les fichiers trouvés
+
+# Lire les fichiers Parquet avec les chemins relatifs
+dataset = pq.ParquetDataset(files, filesystem=s3)
+
+# Convertir en DataFrame Pandas
+df = dataset.read().to_pandas()
+
+print(df.head())
