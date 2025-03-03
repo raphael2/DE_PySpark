@@ -51,7 +51,6 @@ while True :
     for json_data in cars_df_js.collect():
         producer.send(topic, value=json_data)
         
-        #producer.flush()
         time.sleep(1)
             
 
